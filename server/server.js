@@ -1,20 +1,25 @@
-const net = require('net'); //crear objeto y require es la libreria node
-const server = net.createServer(); //creacion de servidor
+const net = require('net');
+const server = net.createServer();
+
+const mensajes = [];
 
 server.on('connection', (socket)=>{
-    socket.on('data', (data)=>{
-        console.log('Mensaje recibido desde cliente:'+ data)
-        socket.write('Mensaje Recibido\n')
-    })
-    socket.on('close', ()=>{
+    socket.on('data',(data)=>{
+        const mensaje = data.toString('utf-8')
+        console.log('Mensaje recibido desde el cliente:'+ mensaje)
+        mensajes.push(mensaje)
+        socket.write(mensajes.join('\n') + '\n')
+    });
+
+    socket.on('close',()=>{
         console.log('Comunicacion finalizada')
-    })
-    socket.on('error', (err)=>{
+    });
+
+    socket.on('error',(err)=>{
         console.log(err.message)
-    })
-})
-server.listen(3000, ()=>{
-    console.log('Servidor funcionando en el puerto:', server.address().port)
+    });
 })
 
-//que el servidor no muestre los mensajes en la terminal
+server.listen(3000, ()=>{
+    console.log('servidor funcionando en el puerto:', server.address().port)
+})
